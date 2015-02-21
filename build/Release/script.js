@@ -878,6 +878,16 @@ handleWriteRequestOrCommand = function(request) {
       } else {
         //handle.attribute.emit('writeRequest', data, offset, withoutResponse, callback);
 		debug("emit writeRequest");
+	debug("data written " + data.length + " : " + data.toString("hex"));
+	receivedBits += data.length *8;
+	debug("Total received bits: " + receivedBits);
+	if(receivedBits >= 10000){
+	  var end = new Date() - start;
+	  var speed = receivedBits / end;
+	  debug("10kb received in " + end + "ms. Speed: " + speed + " kbps");
+	  receivedBits = 0;
+	  start = new Date();
+	}
       }
     } else {
       response = errorResponse(requestType, valueHandle, ATT_ECODE_WRITE_NOT_PERM);
@@ -901,6 +911,9 @@ errorResponse = function(opcode, handle, status) {
 };
 
 var _buffer = "";
+
+var start = new Date();
+var best = 0;
 
 var onStdoutData = function(data) {
   _buffer += data.toString();
@@ -949,6 +962,8 @@ var send = function(data) {
   l2capBle_process.stdin.write(data.toString('hex') + '\n');
 };
 
+var receivedBits = 0;
+
 var _mtu = 23;
 var hciBle_dir = '/home/johan/bleno/build/Release/hci-ble';
 
@@ -975,6 +990,17 @@ debug('l2capBle_dir = ' + l2capBle_dir);
 var l2capBle_process = spawn(l2capBle_dir);
 l2capBle_process.stdout.on('data', onStdoutData);
 
+var service =  {
+      uuid: '1337',
+      characteristics: [
+        {
+          uuid: '1338',
+          properties: ['writeWithoutResponse'],
+          secure: [],
+          value: new Buffer("1234"),
+          descriptors: []
+        }
+      ]
+    };
 
-
-setServices([]);
+setServices([service]);
