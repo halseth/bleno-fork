@@ -965,7 +965,7 @@ var send = function(data) {
 var receivedBits = 0;
 
 var _mtu = 23;
-var hciBle_dir = '/home/johan/bleno/build/Release/hci-ble';
+var hciBle_dir = './hci-ble';
 
 debug('hciBl_dir = ' + hciBle_dir);
 
@@ -983,7 +983,7 @@ hciBle_process.on('error', function(er) {
 startAdvertising("MyCool", ["1337"]);
 
  
-var l2capBle_dir = '/home/johan/bleno/build/Release/l2cap-ble';
+var l2capBle_dir = './l2cap-ble';
 
 debug('l2capBle_dir = ' + l2capBle_dir);
 
